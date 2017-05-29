@@ -2,10 +2,11 @@ import numpy as np
 import cv2
 import random
 import copy
-import data_augment
-import roi_helpers
 import threading
 import itertools
+
+from keras_frcnn import data_augment
+from keras_frcnn import roi_helpers
 
 random.seed(0)
 
@@ -66,7 +67,6 @@ def get_new_img_size(width, height, img_min_side=600):
 
 
 
-
 class SampleSelector:
 	def __init__(self, class_count):
 		# ignore classes that have zero samples
@@ -98,13 +98,13 @@ def calc_rpn(C, img_data, width, height, resized_width, resized_height):
 	downscale = float(C.rpn_stride)
 	anchor_sizes = C.anchor_box_scales
 	anchor_ratios = C.anchor_box_ratios
-	num_anchors = len(anchor_sizes) * len(anchor_ratios)	
+	num_anchors = len(anchor_sizes) * len(anchor_ratios)
 
 	# calculate the output map size based on the network architecture
 	(output_width, output_height) = get_img_output_length(resized_width, resized_height)
 
 	n_anchratios = len(anchor_ratios)
-	
+
 	# initialise empty output objectives
 	y_rpn_overlap = np.zeros((output_height, output_width, num_anchors))
 	y_is_box_valid = np.zeros((output_height, output_width, num_anchors))
@@ -126,23 +126,23 @@ def calc_rpn(C, img_data, width, height, resized_width, resized_height):
 		gta[bbox_num, 1] = bbox['x2'] * (resized_width / float(width))
 		gta[bbox_num, 2] = bbox['y1'] * (resized_height / float(height))
 		gta[bbox_num, 3] = bbox['y2'] * (resized_height / float(height))
-	
+
 	# rpn ground truth
 
 	for anchor_size_idx in xrange(len(anchor_sizes)):
 		for anchor_ratio_idx in xrange(n_anchratios):
 			anchor_x = anchor_sizes[anchor_size_idx] * anchor_ratios[anchor_ratio_idx][0]
-			anchor_y = anchor_sizes[anchor_size_idx] * anchor_ratios[anchor_ratio_idx][1]	
-			
-			for ix in xrange(output_width):					
-				# x-coordinates of the current anchor box	
+			anchor_y = anchor_sizes[anchor_size_idx] * anchor_ratios[anchor_ratio_idx][1]
+
+			for ix in xrange(output_width):
+				# x-coordinates of the current anchor box
 				x1_anc = downscale * (ix + 0.5) - anchor_x / 2
-				x2_anc = downscale * (ix + 0.5) + anchor_x / 2	
-				
-				# ignore boxes that go across image boundaries					
+				x2_anc = downscale * (ix + 0.5) + anchor_x / 2
+
+				# ignore boxes that go across image boundaries
 				if x1_anc < 0 or x2_anc > resized_width:
 					continue
-					
+
 				for jy in xrange(output_height):
 
 					# y-coordinates of the current anchor box
@@ -153,7 +153,7 @@ def calc_rpn(C, img_data, width, height, resized_width, resized_height):
 					if y1_anc < 0 or y2_anc > resized_height:
 						continue
 
-					# bbox_type indicates whether an anchor should be a target 
+					# bbox_type indicates whether an anchor should be a target
 					bbox_type = 'neg'
 
 					# this is the best IOU for the (x,y) coord and the current anchor
@@ -161,7 +161,7 @@ def calc_rpn(C, img_data, width, height, resized_width, resized_height):
 					best_iou_for_loc = 0.0
 
 					for bbox_num in xrange(num_bboxes):
-						
+
 						# get IOU of the current GT box and the current anchor box
 						curr_iou = iou([gta[bbox_num, 0], gta[bbox_num, 2], gta[bbox_num, 1], gta[bbox_num, 3]], [x1_anc, y1_anc, x2_anc, y2_anc])
 						# calculate the regression targets if they will be needed
@@ -175,7 +175,7 @@ def calc_rpn(C, img_data, width, height, resized_width, resized_height):
 							ty = (cy - cya) / (y2_anc - y1_anc)
 							tw = np.log((gta[bbox_num, 1] - gta[bbox_num, 0]) / (x2_anc - x1_anc))
 							th = np.log((gta[bbox_num, 3] - gta[bbox_num, 2]) / (y2_anc - y1_anc))
-						
+
 						if img_data['bboxes'][bbox_num]['class'] != 'bg':
 
 							# all GT boxes should be mapped to an anchor box, so we keep track of which anchor box was best
@@ -276,9 +276,9 @@ class threadsafe_iter:
 
 	def next(self):
 		with self.lock:
-			return self.it.next()		
+			return next(self.it)
 
-	
+
 def threadsafe_generator(f):
 	"""A decorator that takes a generator function and makes it thread-safe.
 	"""
@@ -288,7 +288,7 @@ def threadsafe_generator(f):
 
 def get_anchor_gt(all_img_data, class_count, C, backend, mode='train'):
 
-	all_img_data = sorted(all_img_data)
+	all_img_data = sorted(all_img_data, key=lambda x: str(x))
 
 	sample_selector = SampleSelector(class_count)
 

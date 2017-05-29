@@ -19,7 +19,7 @@ from keras_frcnn.FixedBatchNormalization import FixedBatchNormalization
 def identity_block(input_tensor, kernel_size, filters, stage, block, trainable=True):
 
     nb_filter1, nb_filter2, nb_filter3 = filters
-    
+
     if K.image_dim_ordering() == 'tf':
         bn_axis = 3
     else:
@@ -226,4 +226,3 @@ def classifier(base_layers, input_rois, num_rois, nb_classes = 21, trainable=Fal
     # note: no regression target for bg class
     out_regr = TimeDistributed(Dense(4 * (nb_classes-1), activation='linear', kernel_initializer='zero'), name='dense_regress_{}'.format(nb_classes))(out)
     return [out_class, out_regr]
-

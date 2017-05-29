@@ -1,9 +1,9 @@
 import numpy as np
 import pdb
 import math
-import data_generators
 import copy
 
+from keras_frcnn import data_generators
 
 def calc_iou(R, img_data, C, class_mapping):
 
@@ -169,10 +169,10 @@ def non_max_suppression_fast(boxes, probs, overlap_thresh=0.9, max_boxes=300):
 	if boxes.dtype.kind == "i":
 		boxes = boxes.astype("float")
 
-	# initialize the list of picked indexes	
+	# initialize the list of picked indexes
 	pick = []
 
-	# sort the bounding boxes 
+	# sort the bounding boxes
 	idxs = np.argsort(probs)
 
 	# keep looping while some indexes still remain in the indexes

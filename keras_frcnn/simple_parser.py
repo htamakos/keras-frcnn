@@ -10,7 +10,7 @@ def get_data(input_path):
 	class_mapping = {}
 
 	visualise = True
-	
+
 	with open(input_path,'r') as f:
 
 		print('Parsing annotation files')
@@ -32,7 +32,7 @@ def get_data(input_path):
 
 			if filename not in all_imgs:
 				all_imgs[filename] = {}
-				
+
 				img = cv2.imread(filename)
 				(rows,cols) = img.shape[:2]
 				all_imgs[filename]['filepath'] = filename
@@ -50,7 +50,7 @@ def get_data(input_path):
 		all_data = []
 		for key in all_imgs:
 			all_data.append(all_imgs[key])
-		
+
 		# make sure the bg class is last in the list
 		if found_bg:
 			if class_mapping['bg'] != len(class_mapping) - 1:
@@ -58,7 +58,5 @@ def get_data(input_path):
 				val_to_switch = class_mapping['bg']
 				class_mapping['bg'] = len(class_mapping) - 1
 				class_mapping[key_to_switch] = val_to_switch
-		
+
 		return all_data, classes_count, class_mapping
-
-

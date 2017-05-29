@@ -1,7 +1,9 @@
 import os
+
 import cv2
 import xml.etree.ElementTree as ET
 import numpy as np
+
 def get_data(input_path):
 	all_imgs = []
 
@@ -12,7 +14,6 @@ def get_data(input_path):
 	visualise = False
 
 	data_paths = [os.path.join(input_path,s) for s in ['VOC2007', 'VOC2012']]
-	
 
 	print('Parsing annotation files')
 
@@ -34,7 +35,6 @@ def get_data(input_path):
 					test_files.append(line.strip() + '.jpg')
 		except Exception as e:
 			print(e)
-		
 
 		annots = [os.path.join(annot_path, s) for s in os.listdir(annot_path)]
 		idx = 0

@@ -3,13 +3,15 @@ import cv2
 import numpy as np
 import sys
 import pickle
-from optparse import OptionParser
 import time
-from keras_frcnn import config
-import keras_frcnn.resnet as nn
+from optparse import OptionParser
+
 from keras import backend as K
 from keras.layers import Input
 from keras.models import Model
+
+import keras_frcnn.resnet as nn
+from keras_frcnn import config
 from keras_frcnn import roi_helpers
 
 sys.setrecursionlimit(40000)
@@ -45,7 +47,7 @@ img_path = options.test_path
 def format_img(img, C):
 	img_min_side = float(C.im_size)
 	(height,width,_) = img.shape
-	
+
 	if width <= height:
 		f = img_min_side/width
 		new_height = int(f * height)
@@ -71,7 +73,7 @@ class_mapping = C.class_mapping
 if 'bg' not in class_mapping:
 	class_mapping['bg'] = len(class_mapping)
 
-class_mapping = {v: k for k, v in class_mapping.iteritems()}
+class_mapping = {v: k for k, v in list(class_mapping.items())}
 print(class_mapping)
 class_to_color = {class_mapping[v]: np.random.randint(0, 255, 3) for v in class_mapping}
 C.num_rois = int(options.num_rois)
@@ -131,7 +133,7 @@ for idx, img_name in enumerate(sorted(os.listdir(img_path))):
 	img_scaled[:, :, 0] += 123.68
 	img_scaled[:, :, 1] += 116.779
 	img_scaled[:, :, 2] += 103.939
-	
+
 	img_scaled = img_scaled.astype(np.uint8)
 
 	if K.image_dim_ordering() == 'tf':
@@ -139,7 +141,6 @@ for idx, img_name in enumerate(sorted(os.listdir(img_path))):
 
 	# get the feature maps and output from the RPN
 	[Y1, Y2, F] = model_rpn.predict(X)
-	
 
 	R = roi_helpers.rpn_to_roi(Y1, Y2, C, K.image_dim_ordering(), overlap_thresh=0.7)
 
