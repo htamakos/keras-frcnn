@@ -6,14 +6,18 @@ import numpy as np
 from optparse import OptionParser
 import pickle
 
-from keras import backend as K
-from keras.optimizers import Adam
-from keras.layers import Input
-from keras.models import Model
-from keras_frcnn import config, data_generators
-from keras_frcnn import losses as losses
+from tensorflow.contrib.keras.python.keras import backend as K
+from tensorflow.contrib.keras.python.keras.optimizers import Adam
+from tensorflow.contrib.keras.python.keras.layers import Input
+from tensorflow.contrib.keras.python.keras.models import Model
+from tensorflow.contrib.keras.python.keras_frcnn import config, data_generators
+from tensorflow.contrib.keras.python.keras_frcnn import losses as losses
 from keras_frcnn import resnet as nn
 import keras_frcnn.roi_helpers as roi_helpers
+
+def dprint(s):
+	print(s)
+	sys.stdout.flush()
 
 sys.setrecursionlimit(40000)
 
@@ -68,17 +72,17 @@ if 'bg' not in classes_count:
 
 C.class_mapping = class_mapping
 
-inv_map = {v: k for k, v in class_mapping.iteritems()}
+inv_map = {v: k for k, v in list(class_mapping.items())}
 
-print('Training images per class:')
+dprint('Training images per class:')
 pprint.pprint(classes_count)
-print('Num classes (including bg) = {}'.format(len(classes_count)))
+dprint('Num classes (including bg) = {}'.format(len(classes_count)))
 
 config_output_filename = options.config_filename
 
-with open(config_output_filename, 'w') as config_f:
+with open(config_output_filename, 'wb') as config_f:
 	pickle.dump(C,config_f)
-	print('Config has been written to {}, and can be loaded when testing to ensure correct results'.format(config_output_filename))
+	dprint('Config has been written to {}, and can be loaded when testing to ensure correct results'.format(config_output_filename))
 
 random.shuffle(all_imgs)
 
@@ -87,8 +91,8 @@ num_imgs = len(all_imgs)
 train_imgs = [s for s in all_imgs if s['imageset'] == 'trainval']
 val_imgs = [s for s in all_imgs if s['imageset'] == 'test']
 
-print('Num train samples {}'.format(len(train_imgs)))
-print('Num val samples {}'.format(len(val_imgs)))
+dprint('Num train samples {}'.format(len(train_imgs)))
+dprint('Num val samples {}'.format(len(val_imgs)))
 
 
 data_gen_train = data_generators.get_anchor_gt(train_imgs, classes_count, C, K.image_dim_ordering(), mode='train')
@@ -118,11 +122,11 @@ model_classifier = Model([img_input, roi_input], classifier)
 model_all = Model([img_input, roi_input], rpn[:2] + classifier)
 
 try:
-	print('loading weights from {}'.format(C.base_net_weights))
+	dprint('loading weights from {}'.format(C.base_net_weights))
 	model_rpn.load_weights(C.base_net_weights, by_name=True)
 	model_classifier.load_weights(C.base_net_weights, by_name=True)
 except:
-	print('Could not load pretrained model weights. Weights can be found at {} and {}'.format(
+	dprint('Could not load pretrained model weights. Weights can be found at {} and {}'.format(
 		'https://github.com/fchollet/deep-learning-models/releases/download/v0.2/resnet50_weights_th_dim_ordering_th_kernels_notop.h5',
 		'https://github.com/fchollet/deep-learning-models/releases/download/v0.2/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5'
 	))
@@ -145,8 +149,8 @@ start_time = time.time()
 
 best_loss = np.Inf
 
-class_mapping_inv = {v: k for k, v in class_mapping.iteritems()}
-print('Starting training')
+class_mapping_inv = {v: k for k, v in list(class_mapping.items())}
+dprint('Starting training')
 
 while True:
 	try:
@@ -154,11 +158,11 @@ while True:
 		if len(rpn_accuracy_rpn_monitor) == epoch_length and C.verbose:
 			mean_overlapping_bboxes = float(sum(rpn_accuracy_rpn_monitor))/len(rpn_accuracy_rpn_monitor)
 			rpn_accuracy_rpn_monitor = []
-			print('Average number of overlapping bounding boxes from RPN = {} for {} previous iterations'.format(mean_overlapping_bboxes, epoch_length))
+			dprint('Average number of overlapping bounding boxes from RPN = {} for {} previous iterations'.format(mean_overlapping_bboxes, epoch_length))
 			if mean_overlapping_bboxes == 0:
-				print('RPN is not producing bounding boxes that overlap the ground truth boxes. Results will not be satisfactory. Keep training.')
+				dprint('RPN is not producing bounding boxes that overlap the ground truth boxes. Results will not be satisfactory. Keep training.')
 
-		X, Y, img_data = data_gen_train.next()
+		X, Y, img_data = next(data_gen_train)
 
 		loss_rpn = model_rpn.train_on_batch(X, Y)
 
@@ -232,28 +236,28 @@ while True:
 			rpn_accuracy_for_epoch = []
 
 			if C.verbose:
-				print('Epoch {}:'.format(epoch_num))
-				print('Mean number of bounding boxes from RPN overlapping ground truth boxes: {}'.format(mean_overlapping_bboxes))
-				print('Classifier accuracy for bounding boxes from RPN: {}'.format(class_acc))
-				print('Loss RPN classifier: {}'.format((loss_rpn_cls)))
-				print('Loss RPN regression: {}'.format((loss_rpn_regr)))
-				print('Loss Classifier classifier: {}'.format((loss_class_cls)))
-				print('Loss Classifier regression: {}'.format((loss_class_regr)))
-				print('Elapsed time: {}'.format(time.time() - start_time))
+				dprint('Epoch {}:'.format(epoch_num))
+				dprint('Mean number of bounding boxes from RPN overlapping ground truth boxes: {}'.format(mean_overlapping_bboxes))
+				dprint('Classifier accuracy for bounding boxes from RPN: {}'.format(class_acc))
+				dprint('Loss RPN classifier: {}'.format((loss_rpn_cls)))
+				dprint('Loss RPN regression: {}'.format((loss_rpn_regr)))
+				dprint('Loss Classifier classifier: {}'.format((loss_class_cls)))
+				dprint('Loss Classifier regression: {}'.format((loss_class_regr)))
+				dprint('Elapsed time: {}'.format(time.time() - start_time))
 			else:
-				print('loss_rpn_cls,{},loss_rpn_regr,{},loss_class_cls,{},loss_class_regr,{},class_acc,{},elapsed_time,{}'.format(loss_rpn_cls, loss_rpn_regr, loss_class_cls, loss_class_regr, class_acc, time.time() - start_time))
+				dprint('loss_rpn_cls,{},loss_rpn_regr,{},loss_class_cls,{},loss_class_regr,{},class_acc,{},elapsed_time,{}'.format(loss_rpn_cls, loss_rpn_regr, loss_class_cls, loss_class_regr, class_acc, time.time() - start_time))
 			curr_loss = loss_rpn_cls + loss_rpn_regr + loss_class_cls + loss_class_regr
 			iter_num = 0
 			start_time = time.time()
 			epoch_num += 1
 			if epoch_num == 1 or curr_loss < best_loss:
 				if C.verbose:
-					print('Total loss decreased from {} to {}, saving weights'.format(best_loss,curr_loss))
+					dprint('Total loss decreased from {} to {}, saving weights'.format(best_loss,curr_loss))
 				best_loss = curr_loss
 				model_all.save_weights(C.model_path)
 		if epoch_num == num_epochs:
-			print('Training complete, exiting.')
+			dprint('Training complete, exiting.')
 			sys.exit()
 	except Exception as e:
-		print('Exception: {}'.format(e))
+		dprint('Exception: %s' % (e))
 		continue

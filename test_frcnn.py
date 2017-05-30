@@ -6,9 +6,9 @@ import pickle
 import time
 from optparse import OptionParser
 
-from keras import backend as K
-from keras.layers import Input
-from keras.models import Model
+from tensorflow.contrib.keras.python.keras import backend as K
+from tensorflow.contrib.keras.python.keras.layers import Input
+from tensorflow.contrib.keras.python.keras.models import Model
 
 import keras_frcnn.resnet as nn
 from keras_frcnn import config

@@ -1,8 +1,6 @@
-from keras.engine.topology import Layer
-import keras.backend as K
-
-if K.backend() == 'tensorflow':
-    import tensorflow as tf
+from tensorflow.contrib.keras.python.keras.engine.topology import Layer
+import tensorflow.contrib.keras.python.keras.backend as K
+import tensorflow as tf
 
 class RoiPoolingConv(Layer):
     '''ROI pooling layer for 2D inputs.
