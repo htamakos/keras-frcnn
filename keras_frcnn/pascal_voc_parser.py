@@ -13,7 +13,8 @@ def get_data(input_path):
 
 	visualise = False
 
-	data_paths = [os.path.join(input_path,s) for s in ['VOC2007', 'VOC2012']]
+	data_paths = [os.path.join(input_path,s) for s in ['VOC2007', 'VOC2012']
+	                  if os.path.exists(os.path.join(input_path, s))]
 
 	print('Parsing annotation files')
 

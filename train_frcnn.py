@@ -95,8 +95,8 @@ dprint('Num train samples {}'.format(len(train_imgs)))
 dprint('Num val samples {}'.format(len(val_imgs)))
 
 
-data_gen_train = data_generators.get_anchor_gt(train_imgs, classes_count, C, K.image_dim_ordering(), mode='train')
-data_gen_val = data_generators.get_anchor_gt(val_imgs, classes_count, C, K.image_dim_ordering(), mode='val')
+data_gen_train = data_generators.get_anchor_gt(train_imgs, classes_count, C, mode='train')
+data_gen_val = data_generators.get_anchor_gt(val_imgs, classes_count, C, mode='val')
 
 if K.image_dim_ordering() == 'th':
 	input_shape_img = (3, None, None)
