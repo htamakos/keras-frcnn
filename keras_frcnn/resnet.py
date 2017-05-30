@@ -17,6 +17,7 @@ from tensorflow.contrib.keras import backend as K
 from keras_frcnn.RoiPoolingConv import RoiPoolingConv
 from keras_frcnn.FixedBatchNormalization import FixedBatchNormalization
 from tensorflow.python.ops import variables as tf_variables
+import tensorflow as tf
 
 def is_keras_tensor(x):
     """Returns whether `x` is a Keras tensor.
