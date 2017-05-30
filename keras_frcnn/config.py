@@ -52,9 +52,6 @@ class Config:
 		# weight files can be found at:
 		# https://github.com/fchollet/deep-learning-models/releases/download/v0.2/resnet50_weights_th_dim_ordering_th_kernels_notop.h5
 		# https://github.com/fchollet/deep-learning-models/releases/download/v0.2/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5
-		if K.image_dim_ordering() == 'th':
-			self.base_net_weights = 'resnet50_weights_th_dim_ordering_th_kernels_notop.h5'
-		else:
-			self.base_net_weights = 'resnet50_weights_tf_dim_ordering_tf_kernels.h5'
+		self.base_net_weights = 'resnet50_weights_tf_dim_ordering_tf_kernels.h5'
 
 		self.model_path = 'model_frcnn.hdf5'
