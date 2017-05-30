@@ -6,12 +6,12 @@ import numpy as np
 from optparse import OptionParser
 import pickle
 
-from tensorflow.contrib.keras.python.keras import backend as K
+from tensorflow.contrib.keras import backend as K
 from tensorflow.contrib.keras.python.keras.optimizers import Adam
 from tensorflow.contrib.keras.python.keras.layers import Input
 from tensorflow.contrib.keras.python.keras.models import Model
-from tensorflow.contrib.keras.python.keras_frcnn import config, data_generators
-from tensorflow.contrib.keras.python.keras_frcnn import losses as losses
+from keras_frcnn import config, data_generators
+from keras_frcnn import losses as losses
 from keras_frcnn import resnet as nn
 import keras_frcnn.roi_helpers as roi_helpers
 

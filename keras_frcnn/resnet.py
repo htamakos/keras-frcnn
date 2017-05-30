@@ -12,7 +12,7 @@ from tensorflow.contrib.keras.python.keras.layers import Input, Add, Dense, Acti
 from tensorflow.contrib.keras.python.keras.layers import Flatten, Convolution2D, MaxPooling2D, ZeroPadding2D
 from tensorflow.contrib.keras.python.keras.layers import AveragePooling2D, TimeDistributed
 
-from tensorflow.contrib.keras.python.keras import backend as K
+from tensorflow.contrib.keras import backend as K
 
 from keras_frcnn.RoiPoolingConv import RoiPoolingConv
 from keras_frcnn.FixedBatchNormalization import FixedBatchNormalization

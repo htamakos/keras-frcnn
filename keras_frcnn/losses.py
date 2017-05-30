@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow.contrib.keras.python.keras import backend as K
+from tensorflow.contrib.keras import backend as K
 from tensorflow.contrib.keras.python.keras.losses import categorical_crossentropy
 
 lambda_rpn_regr = 1.0

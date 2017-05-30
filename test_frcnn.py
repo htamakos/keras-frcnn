@@ -6,7 +6,7 @@ import pickle
 import time
 from optparse import OptionParser
 
-from tensorflow.contrib.keras.python.keras import backend as K
+from tensorflow.contrib.keras import backend as K
 from tensorflow.contrib.keras.python.keras.layers import Input
 from tensorflow.contrib.keras.python.keras.models import Model
 

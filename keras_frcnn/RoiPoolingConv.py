@@ -1,5 +1,5 @@
 from tensorflow.contrib.keras.python.keras.engine.topology import Layer
-import tensorflow.contrib.keras.python.keras.backend as K
+from tensorflow.contrib.keras import backend as K
 import tensorflow as tf
 
 class RoiPoolingConv(Layer):
