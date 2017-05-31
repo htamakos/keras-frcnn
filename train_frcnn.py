@@ -258,3 +258,5 @@ while True:
 	except Exception as e:
 		dprint('Exception: %s' % (e))
 		continue
+
+K.clear_session()
