@@ -116,7 +116,7 @@ img_path = options.test_path
 def format_img(img, C):
 	img_min_side = float(C.im_size)
 	(height,width,_) = img.shape
-	
+
 	if width <= height:
 		f = img_min_side/width
 		new_height = int(f * height)
@@ -149,13 +149,8 @@ print(class_mapping)
 class_to_color = {class_mapping[v]: np.random.randint(0, 255, 3) for v in class_mapping}
 C.num_rois = int(options.num_rois)
 
-if K.image_dim_ordering() == 'th':
-	input_shape_img = (3, None, None)
-	input_shape_features = (1024, None, None)
-else:
-	input_shape_img = (None, None, 3)
-	input_shape_features = (None, None, 1024)
-
+input_shape_img = (None, None, 3)
+input_shape_features = (None, None, 1024)
 
 img_input = Input(shape=input_shape_img)
 roi_input = Input(shape=(C.num_rois, 4))
@@ -196,8 +191,7 @@ for idx, img_data in enumerate(test_imgs):
 
 	X, fx, fy = format_img(img, C)
 
-	if K.image_dim_ordering() == 'tf':
-		X = np.transpose(X, (0, 2, 3, 1))
+	X = np.transpose(X, (0, 2, 3, 1))
 
 	# get the feature maps and output from the RPN
 	[Y1, Y2, F] = model_rpn.predict(X)
