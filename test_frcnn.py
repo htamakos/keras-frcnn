@@ -33,7 +33,7 @@ if not options.test_path:   # if filename is not given
 
 config_output_filename = options.config_filename
 
-with open(config_output_filename, 'r') as f_in:
+with open(config_output_filename, 'rb') as f_in:
 	C = pickle.load(f_in)
 
 # turn off any data augmentation at test time
@@ -78,12 +78,8 @@ print(class_mapping)
 class_to_color = {class_mapping[v]: np.random.randint(0, 255, 3) for v in class_mapping}
 C.num_rois = int(options.num_rois)
 
-if K.image_dim_ordering() == 'th':
-	input_shape_img = (3, None, None)
-	input_shape_features = (1024, None, None)
-else:
-	input_shape_img = (None, None, 3)
-	input_shape_features = (None, None, 1024)
+input_shape_img = (None, None, 3)
+input_shape_features = (None, None, 1024)
 
 
 img_input = Input(shape=input_shape_img)
@@ -135,9 +131,7 @@ for idx, img_name in enumerate(sorted(os.listdir(img_path))):
 	img_scaled[:, :, 2] += 103.939
 
 	img_scaled = img_scaled.astype(np.uint8)
-
-	if K.image_dim_ordering() == 'tf':
-		X = np.transpose(X, (0, 2, 3, 1))
+	X = np.transpose(X, (0, 2, 3, 1))
 
 	# get the feature maps and output from the RPN
 	[Y1, Y2, F] = model_rpn.predict(X)
