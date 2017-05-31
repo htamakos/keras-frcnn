@@ -26,7 +26,7 @@ def call(self, inputs, mask=None):
 
 ## Usage
 ### Learn
-python train_frcnn.py -p <DataDir>
+python train_frcnn.py -p < DataDir >
 
 ### Test
-python test_frcnn.py -p <DataDir>
+python test_frcnn.py -p < DataDir >
