@@ -6,5 +6,20 @@ This is a fork repository of https://github.com/yhenon/keras-frcnn
 - tensorflow 1.1
 
 ## Notice!!!
+### 1. Fix a bug of tensorflow
 
-Not work at theano backend.
+K.rnn method has not input_length argument. So, You must comment out it!!!!!
+
+```
+#tensorflow/contrib/keras/python/keras/layers/wrappers.py#188-189
+def call(self, inputs, mask=None):
+      .......
+      _, outputs, _ = K.rnn(
+          step,
+          inputs,
+          initial_states=[], #input_length=input_shape[1],
+          unroll=False)
+```
+
+
+### 2. Not work at theano backend.
