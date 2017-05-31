@@ -23,3 +23,10 @@ def call(self, inputs, mask=None):
 
 
 ### 2. Not work at theano backend.
+
+## Usage
+### Learn
+python train_frcnn.py -p <DataDir>
+
+### Test
+python test_frcnn.py -p <DataDir>
